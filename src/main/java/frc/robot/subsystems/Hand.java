@@ -12,7 +12,10 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.testingdashboard.TestingDashboard;
 
+import com.revrobotics.CANSparkMax;
+import frc.robot.RobotMap;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 
 public class Hand extends SubsystemBase {
 
@@ -20,13 +23,20 @@ public class Hand extends SubsystemBase {
 
   private static Hand m_hand;
 
+  private CANSparkMax m_roller;
+  private CANSparkMax m_wrist;
+  private RelativeEncoder m_rollerEncoder;
+  private RelativeEncoder m_wristEndoder;
+
+  private double m_currentLimit;
+
   /** Creates a new Claw. */
   private Hand() {
 
     m_handMotor = new CANSparkMax(RobotMap.H_MOTOR, MotorType.kBrushless);
 
     m_handMotor.restoreFactoryDefaults();
-
+    
   }
 
   public static Hand getInstance() {
@@ -34,12 +44,17 @@ public class Hand extends SubsystemBase {
       m_hand = new Hand();
       TestingDashboard.getInstance().registerSubsystem(m_hand, "Hand");
       TestingDashboard.getInstance().registerNumber(m_hand, "MotorInput", "HandPower", Constants.DEFAULT_INTAKE_CUBE_POWER);
+      TestingDashboard.getInstance().registerNumber(m_hand, "MotorOutput", "HandOutputCurrent", 0.0d);
     }
     return m_hand;
   }
 
   public void setHandMotorPower(double value) {
     m_handMotor.set(value);
+  }
+
+  public double getHandOutputCurrent() {
+    return m_handMotor.getOutputCurrent();
   }
 
   @Override
